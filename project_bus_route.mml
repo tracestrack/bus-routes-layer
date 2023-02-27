@@ -1,0 +1,93 @@
+scale: 1
+metatile: 2
+name: Tracestrack Bus Route
+description: A map focusing on bus routes.
+bounds: &world
+  - -180
+  - -85.05112877980659
+  - 180
+  - 85.05112877980659
+center:
+  - 0
+  - 0
+  - 4
+format: png
+interactivity: false
+minzoom: 0
+maxzoom: 19
+srs: "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
+
+# Various parts to be included later on
+_parts:
+  # Extents are used for tilemill, and don't actually make it to the generated XML
+  extents: &extents
+    extent: *world
+    srs-name: "900913"
+    srs: "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over"
+  osm2pgsql: &osm2pgsql
+    type: "postgis"
+    dbname: "gis"
+    user: "postgres"
+    password: "password"
+    port: "5432"
+    host: "127.0.0.1"
+    key_field: ""
+    geometry_field: "way"
+    extent: "-20037508,-20037508,20037508,20037508"
+
+Stylesheet:
+  - fonts.mss
+  - bus-routes.mss
+Layer:
+
+  - id: routes
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            route,
+            substr(md5(ref),1,1) as hash
+          FROM planet_osm_line
+          WHERE route in ('bus', 'tram')  AND ST_Length(way) > 1000
+          order by hash desc
+        ) AS routes
+    properties:
+      minzoom: 12
+      cache-features: false
+
+  - id: stations
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            substr(md5(name),1,1) as hash
+          FROM planet_osm_point
+          WHERE highway IN ('bus_stop')
+        ) AS stations
+    properties:
+      minzoom: 13
+      cache-features: false
+
+  - id: routes-text
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            ref AS name,
+            route,
+            substr(md5(ref),1,1) as hash
+          FROM planet_osm_line
+          WHERE route in ('bus', 'tram') AND ST_Length(way) > 1000
+        ) AS routes-text
+    properties:
+      minzoom: 17
+      cache-features: false
