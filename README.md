@@ -8,6 +8,10 @@ Example use cases:
 1. find which buses stop at a certain bus stop.
 2. relatively easy to trace certain bus lines.
 
+## Screenshots
+
+![Screen1](screen.png)
+
 ## How to build
 
 Please follow the guideline in

@@ -87,7 +87,7 @@ Layer:
             substr(md5(ref),1,1) as hash
           FROM planet_osm_line
           WHERE route in ('bus', 'tram') AND ST_Length(way) > 1000
-        ) AS routes-text
+        ) AS routes_text
     properties:
       minzoom: 17
       cache-features: false
