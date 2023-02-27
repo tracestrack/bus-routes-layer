@@ -1,6 +1,6 @@
-# Tracestrack Bus Route Map Layer
+# Tracestrack Bus Routes Layer
 
-This is Carto map style for bus routes layer provided in Tracestrack Map
+This is the Carto map style for the bus routes layer provided in Tracestrack Map
 Service. The goal is to provide an informative maps focusing on bus routes and
 stops.
 
